@@ -221,7 +221,7 @@ Having provisioned the server, we will connect to it via ssh locally by running:
 ```
 ssh -i ~/.ssh/id_rsa ubuntu@34.252.226.201                   # Note: I used my private ssh key i generated locally. The public key was used for the EC2 keypair.
 ```
-Connection: successful:<p>
+Connection successful:<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/e6aa3800-4ece-4c8f-89f4-5c315534905a)<p>
 
 2. **Setting up Jenkins for CI/CD**:
