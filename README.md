@@ -26,11 +26,203 @@ In this project, we will be leveraging the following tools and technologies to i
 By incorporating these tools and practices, we will create a secure and efficient software development and deployment pipeline, ensuring that the application is developed, tested, and deployed with a strong focus on security.
 
 ## Provisioning of resources with Terraform 
+### Provisioning the EC2 Instance with Terraform
+We will start by using Terraform to provision an EC2 instance with the necessary configurations, such as the Amazon Machine Image (AMI), instance type, and security group. We will also create an EBS volume and attach it to the EC2 instance for additional storage.<p>
+**Configure provider.tf**:
+```
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "5.47.0"
+    }
+  }
+}
 
-1. **Provisioning the EC2 Instance with Terraform**:
-   - We will start by using Terraform to provision an EC2 instance with the necessary configurations, such as the Amazon Machine Image (AMI), instance type, and security group.
-   - The user data script in the `main.tf` file will install the required dependencies, including Docker, Kubernetes components, Helm, and other tools.
-   - We will also create an EBS volume and attach it to the EC2 instance for additional storage.
+provider "aws" {
+  region = "eu-west-1"
+}
+```
+Next, we will configure the variables.tf:
+```
+variable "instance_type" {
+  type        = string
+  description = "EC2 Instance type to run"
+  default     = "t2.medium"
+}
+
+variable "name" {
+  type        = string
+  description = "Name of the instance and resources"
+  default     = "netflixclone_server"
+}
+
+variable "key_name" {
+  type        = string
+  description = "Name of the keypair to ssh into the instance"
+  default     = "MyNTCKey"
+}
+
+variable "device_name" {
+  type =  string
+  description = "Name for the volume mount"
+  default = "/dev/sdf"
+}
+
+variable "volume_size" {
+  type = number
+  description = "Size of the volume in GB"
+  default = 20
+}
+```
+Data.tf will import resources already provisioned in AWS to be used in our resource creation:
+```
+# EC2 instance data configurations
+# Inport const ec2InstanceDataConfigurations:
+// -------------------------------------------
+
+# Fetch the Latest Ubuntu AMI
+data "aws_ami" "ubuntu_latest" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+data "aws_key_pair" "ntc-keypair" {
+  key_name           = "MyNTCKeypair"
+}
+```
+Now, we we will configure the resources we want terraform to create in the main.tf file:
+```
+resource "aws_instance" "k8s_instance" {
+  ami           = data.aws_ami.ubuntu_latest.id
+  instance_type = var.instance_type
+  key_name      = data.aws_key_pair.ntc-keypair.key_name
+
+  user_data = <<-EOF
+             #!/bin/bash
+             # Update and install dependencies
+             apt-get update -y
+             apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
+             # Install Docker
+             curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+             add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+             apt-get update -y
+             apt-get install -y docker-ce
+             sudo usermod -aG docker ubuntu
+             newgrp docker
+             sudo chmod 777 /var/run/docker.sock
+
+             # Install Helm
+             curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+
+             # Install Git
+             apt-get install -y git
+
+             EOF
+
+
+  tags = {
+    Name = var.name
+  }
+
+  security_groups = [aws_security_group.k8s_sg.name]
+}
+
+resource "aws_security_group" "k8s_sg" {
+  name        = "k8s-sg"
+  description = "Allow all inbound traffic"
+
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "k8s-sg"
+  }
+}
+
+resource "aws_ebs_volume" "volume" {
+  availability_zone = aws_instance.k8s_instance.availability_zone
+  size              = var.volume_size
+
+  tags = {
+    Name = "${var.name}-volume"
+  }
+}
+
+resource "aws_volume_attachment" "ebs_att" {
+  device_name = var.device_name
+  volume_id   = aws_ebs_volume.volume.id
+  instance_id = aws_instance.k8s_instance.id
+}
+```
+**N/B**: The user data script in the `main.tf` file will install the required dependencies, including Docker, Helm, and other tools.<p>
+lastly, print out some details about our resources in an output.tf file:
+```
+output "instance_id" {
+  value = aws_instance.k8s_instance.id
+}
+
+output "public_ip" {
+  value = aws_instance.k8s_instance.public_ip
+}
+```
+**Initialise and Apply**: To provision the resource, we will run the following **Terraform** commands. 
+```
+terraform init                               # initialises terraform to download all the dependecies it needs to execute the build
+terraform fmt                                # to format all tf files 
+terraform validate                           # to ensure there are no errors in the configurations 
+terraform plan --out=netflixplan             # prints out the plan of the resources to be provisioned 
+terraform apply                              # applies the plan
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/9120e60a-6248-46ec-bb26-b6809141f4ee)<p>
+**Plan Output**:
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/07113420-2192-40e1-92bc-5ad077fd29cb)<p>
+
+Before we apply, let's ensure I do not have the EC2 instance already provisioned in the console:<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/30598ff6-be01-4051-b05e-7fac51f47fa7)<p>
+Terraform has executed the plan and provisioned the resources:<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/1c03dad7-a1cc-4e5a-8c0e-04ea2ca5baeb)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/ed51f8e7-4cf8-471f-ae33-8b8e9825be1f)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/b986a9d2-be51-473a-9a9f-dfa3d2f238d2)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/edfc175f-628b-435c-b4d5-c9a9d0ba77a5)<p>
+
+#### Connecting to The Netflix Server (EC2 Instance)
+Having provisioned the server, we will connect to it via ssh locally by running:
+```
+ssh -i ~/.ssh/id_rsa ubuntu@34.252.226.201                   # Note: I used my private ssh key i generated locally. The public key was used for the EC2 keypair.
+```
+Connection: successful:<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/e6aa3800-4ece-4c8f-89f4-5c315534905a)<p>
 
 2. **Setting up Jenkins for CI/CD**:
    - Once the EC2 instance is provisioned, we will set up Jenkins on the instance to automate the build, test, and deployment processes.
