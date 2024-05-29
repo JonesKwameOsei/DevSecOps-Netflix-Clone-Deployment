@@ -282,9 +282,9 @@ Terraform has executed the plan and provisioned the resources:<p>
 Having provisioned the server, we will connect to it via ssh locally by running:
 ```
 ssh -i "MyNTCKeyPair.pem" ubuntu@ec2-3-251-80-91.eu-west-1.compute.amazonaws.com              # Connection to the K8s-server
-
+ssh -i "MyNTCKeyPair.pem" ubuntu@ec2-34-245-214-90.eu-west-1.compute.amazonaws.com            # Connection to the Grafana-server
 ```
-**Note**: I used the ssh client to connect:<p>
+**Note**: I used the ssh client to connect to both server:<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/732a82d1-6a99-4916-bb1e-4d8b7cdb0d25)<p>
 
 Connection successful:<p>
