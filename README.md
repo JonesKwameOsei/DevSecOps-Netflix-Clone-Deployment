@@ -276,7 +276,8 @@ Terraform has executed the plan and provisioned the resources:<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/8476cc5c-9bdd-4b0c-8e7a-fb04017a822e)<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/2534f0f8-f894-4ee6-aba3-10dcd3351144)<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/991dd49f-69c0-4bcc-9712-15d8eb266dff)<p>
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/cdd9aed0-40d6-4830-b191-47770d23780a)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/a9532208-3afa-4fd8-b5c3-224d6fbb62fc)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/00810dc6-c4c8-4a56-9b5e-77300784ce15)<p>
 
 #### Connecting to The Netflix Server (EC2 Instance)
 Having provisioned the server, we will connect to it via ssh locally by running:
@@ -291,10 +292,16 @@ Connection successful:<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/677267c4-af40-4606-b042-3df44474313b)<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/868fcb5a-5bb7-4c48-87d8-37cb2e3fa6ef)<p>
 
-2. **Setting up Jenkins for CI/CD**:
+### Setting up Jenkins for CI/CD
    - Once the EC2 instance is provisioned, we will set up Jenkins on the instance to automate the build, test, and deployment processes.
    - We will configure Jenkins to poll the GitHub repository for changes and trigger the CI/CD pipeline accordingly.
    - The pipeline will include steps for building the Docker image, running security scans, and deploying the application to the Kubernetes cluster.
+Let's confirm if jenkins was installed by the userdata when the EC2 instance launched. We will run:
+```
+sudo systemctl status jenkins
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/099ced1f-bf59-432c-bdbf-a2e5fb3bc672)<p>
+From the output, Jenkins CI is up and running.
 
 3. **Integrating Docker and NPM for Packaging the Application**:
    - We will use Docker to package the Netflix clone application and its dependencies into a containerized environment.
