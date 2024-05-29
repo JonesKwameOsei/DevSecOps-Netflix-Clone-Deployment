@@ -46,21 +46,21 @@ provider "aws" {
 Next, we will configure the variables.tf:
 ```
 variable "instance_type" {
-  type        = string
+  type        = list(string)
   description = "EC2 Instance type to run"
-  default     = "t2.medium"
+  default     = ["t2.medium", "t2.micro"]
 }
 
 variable "name" {
-  type        = string
+  type        = list(string)
   description = "Name of the instance and resources"
-  default     = "netflixclone_server"
+  default     = ["netflixclone_server", "grafana_server"]
 }
 
 variable "key_name" {
-  type        = string
+  type        = list(string)
   description = "Name of the keypair to ssh into the instance"
-  default     = "MyNTCKey"
+  default     = ["MyNTCKey", "MyGrafanaKey"]
 }
 
 variable "device_name" {
@@ -70,9 +70,9 @@ variable "device_name" {
 }
 
 variable "volume_size" {
-  type = number
+  type = list(number)
   description = "Size of the volume in GB"
-  default = 20
+  default = [30, 12]
 }
 ```
 Data.tf will import resources already provisioned in AWS to be used in our resource creation:
@@ -103,9 +103,10 @@ data "aws_key_pair" "ntc-keypair" {
 ```
 Now, we we will configure the resources we want terraform to create in the main.tf file:
 ```
+# EC2 resources for Dependecies 
 resource "aws_instance" "k8s_instance" {
   ami           = data.aws_ami.ubuntu_latest.id
-  instance_type = var.instance_type
+  instance_type = var.instance_type[0]
   key_name      = data.aws_key_pair.ntc-keypair.key_name
 
   user_data = <<-EOF
@@ -134,12 +135,13 @@ resource "aws_instance" "k8s_instance" {
 
 
   tags = {
-    Name = var.name
+    Name = var.name[0]
   }
 
   security_groups = [aws_security_group.k8s_sg.name]
 }
 
+# Security group for Netflic-clone server
 resource "aws_security_group" "k8s_sg" {
   name        = "k8s-sg"
   description = "Allow all inbound traffic"
@@ -172,10 +174,10 @@ resource "aws_security_group" "k8s_sg" {
 
 resource "aws_ebs_volume" "volume" {
   availability_zone = aws_instance.k8s_instance.availability_zone
-  size              = var.volume_size
+  size              = var.volume_size[0]
 
   tags = {
-    Name = "${var.name}-volume"
+    Name = "${var.name[0]}-volume"
   }
 }
 
@@ -184,16 +186,76 @@ resource "aws_volume_attachment" "ebs_att" {
   volume_id   = aws_ebs_volume.volume.id
   instance_id = aws_instance.k8s_instance.id
 }
-```
-**N/B**: The user data script in the `main.tf` file will install the required dependencies, including Docker, Helm, and other tools.<p>
-lastly, print out some details about our resources in an output.tf file:
-```
-output "instance_id" {
-  value = aws_instance.k8s_instance.id
+
+# resources for monitoring 
+resource "aws_instance" "grafana_instance" {
+  ami           = data.aws_ami.ubuntu_latest.id
+  instance_type = var.instance_type[1]
+  key_name      = data.aws_key_pair.ntc-keypair.key_name
+
+  tags = {
+    Name = "grafana-instance"
+  }
+
+  security_groups = [aws_security_group.grafana_sg.name]
 }
 
-output "public_ip" {
+# Security group for Grafana monitoring server
+resource "aws_security_group" "grafana_sg" {
+  name        = "grafana-sg"
+  description = "Allow ssh inbound traffic for Grafana instance"
+
+   ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "grafana-sg"
+  }
+}
+
+resource "aws_ebs_volume" "grafana_volume" {
+  availability_zone = aws_instance.grafana_instance.availability_zone
+  size              = var.volume_size[1]
+
+  tags = {
+    Name = "${var.name[1]}-volume"
+  }
+}
+
+resource "aws_volume_attachment" "grafana_ebs_att" {
+  device_name = var.device_name
+  volume_id   = aws_ebs_volume.grafana_volume.id
+  instance_id = aws_instance.grafana_instance.id
+}
+```
+**N/B**: The user data script in the `main.tf` file will install the required dependencies, including Docker, Helm, and other tools needed to complete this project.<p>
+lastly, print out some details about our resources in an output.tf file:
+```
+output "k8s_instance_id" {
+  value = aws_instance.k8s_instance.id
+}               
+
+output "k8s_instance_public_ip" {
   value = aws_instance.k8s_instance.public_ip
+}
+
+output "grafana_instance_id" {
+  value = aws_instance.grafana_instance.id
+}
+
+output "grafana_instance_public_ip" {
+  value = aws_instance.grafana_instance.public_ip
 }
 ```
 **Initialise and Apply**: To provision the resource, we will run the following **Terraform** commands. 
