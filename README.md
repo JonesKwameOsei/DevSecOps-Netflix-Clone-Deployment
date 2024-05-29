@@ -23,11 +23,11 @@ In this project, we will be leveraging the following tools and technologies to i
 6. **Trivy**: An open-source **vulnerability** scanner for container images and other artifacts that will be used to scan the Docker images.
 7. **OWASP**: The Open Web Application Security Project, which provides guidance and tools for web application security, will be integrated to ensure the application's security.
 
-By incorporating these tools and practices, we will create a secure and efficient software development and deployment pipeline, ensuring that the application is developed, tested, and deployed with a strong focus on security.
+By incorporating these tools and practices, we will create a secure and efficient software development and deployment pipelines, ensuring that the application is developed, tested, and deployed with a strong focus on security.
 
 ## Provisioning of resources with Terraform 
 ### Provisioning the EC2 Instance with Terraform
-We will start by using Terraform to provision an EC2 instance with the necessary configurations, such as the Amazon Machine Image (AMI), instance type, and security group. We will also create an EBS volume and attach it to the EC2 instance for additional storage.<p>
+We will start by using Terraform to provision an Elastic Cloud Compute (EC2) instance with the necessary configurations, such as the Amazon Machine Image (AMI), instance type, and security group. We will also create an EBS volume and attach it to the EC2 instance for additional storage.<p>
 **Configure provider.tf**:
 ```
 terraform {
@@ -64,15 +64,15 @@ variable "key_name" {
 }
 
 variable "device_name" {
-  type =  string
+  type        = string
   description = "Name for the volume mount"
-  default = "/dev/sdf"
+  default     = "/dev/sdf"
 }
 
 variable "volume_size" {
-  type = list(number)
+  type        = list(number)
   description = "Size of the volume in GB"
-  default = [30, 12]
+  default     = [30, 12]
 }
 ```
 Data.tf will import resources already provisioned in AWS to be used in our resource creation:
@@ -98,7 +98,7 @@ data "aws_ami" "ubuntu_latest" {
 }
 
 data "aws_key_pair" "ntc-keypair" {
-  key_name           = "MyNTCKeypair"
+  key_name = "MyNTCKeypair"
 }
 ```
 Now, we we will configure the resources we want terraform to create in the main.tf file:
@@ -205,7 +205,7 @@ resource "aws_security_group" "grafana_sg" {
   name        = "grafana-sg"
   description = "Allow ssh inbound traffic for Grafana instance"
 
-   ingress {
+  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -240,12 +240,12 @@ resource "aws_volume_attachment" "grafana_ebs_att" {
 }
 ```
 **N/B**: The user data script in the `main.tf` file will install the required dependencies, including Docker, Helm, and other tools needed to complete this project.<p>
-lastly, print out some details about our resources in an output.tf file:
+Lastly, we will print out some details about our resources in an output.tf file:
 ```
 output "k8s_instance_id" {
   value = aws_instance.k8s_instance.id
-}               
-
+}
+             
 output "k8s_instance_public_ip" {
   value = aws_instance.k8s_instance.public_ip
 }
