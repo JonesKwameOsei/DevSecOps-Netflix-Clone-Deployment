@@ -268,7 +268,7 @@ terraform apply                              # applies the plan
 ```
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/9120e60a-6248-46ec-bb26-b6809141f4ee)<p>
 **Plan Output**:
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/07113420-2192-40e1-92bc-5ad077fd29cb)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/068bd0ce-c393-46fa-bf02-00ae3d65fe0c)<p>
 
 Before we apply, let's ensure I do not have the EC2 instance already provisioned in the console:<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/30598ff6-be01-4051-b05e-7fac51f47fa7)<p>
