@@ -273,10 +273,10 @@ terraform apply                              # applies the plan
 Before we apply, let's ensure I do not have the EC2 instance already provisioned in the console:<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/30598ff6-be01-4051-b05e-7fac51f47fa7)<p>
 Terraform has executed the plan and provisioned the resources:<p>
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/1c03dad7-a1cc-4e5a-8c0e-04ea2ca5baeb)<p>
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/ed51f8e7-4cf8-471f-ae33-8b8e9825be1f)<p>
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/b986a9d2-be51-473a-9a9f-dfa3d2f238d2)<p>
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/edfc175f-628b-435c-b4d5-c9a9d0ba77a5)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/8476cc5c-9bdd-4b0c-8e7a-fb04017a822e)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/2534f0f8-f894-4ee6-aba3-10dcd3351144)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/991dd49f-69c0-4bcc-9712-15d8eb266dff)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/cdd9aed0-40d6-4830-b191-47770d23780a)<p>
 
 #### Connecting to The Netflix Server (EC2 Instance)
 Having provisioned the server, we will connect to it via ssh locally by running:
