@@ -281,8 +281,12 @@ Terraform has executed the plan and provisioned the resources:<p>
 #### Connecting to The Netflix Server (EC2 Instance)
 Having provisioned the server, we will connect to it via ssh locally by running:
 ```
-ssh -i ~/.ssh/id_rsa ubuntu@34.252.226.201                   # Note: I used my private ssh key i generated locally. The public key was used for the EC2 keypair.
+ssh -i "MyNTCKeyPair.pem" ubuntu@ec2-3-251-80-91.eu-west-1.compute.amazonaws.com              # Connection to the K8s-server
+
 ```
+**Note**: I used the ssh client to connect:<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/732a82d1-6a99-4916-bb1e-4d8b7cdb0d25)<p>
+
 Connection successful:<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/e6aa3800-4ece-4c8f-89f4-5c315534905a)<p>
 
