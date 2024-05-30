@@ -678,6 +678,43 @@ password admin
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/550b75ba-02b1-433b-b7aa-85c31957b77f)<p>
 12. Next, select the datasource (Prometheus) and click on `Import`. <p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/37c98caf-39ac-455d-8f73-e77cb3ca3ee4)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/70f6ddb8-26ac-47d0-b44d-7bc654f7be55)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/103cf411-5043-4e33-abb7-6388832eab35)<p>
+
+### Install the Prometheus Plugin and Integrate it with the Prometheus Server
+- Ensure that the `JENKINS SYSTEM` is being monitored.
+- We require a functioning machine for Jenkins.
+- Navigate to Manage Jenkins –> Plugins –> Available Plugins
+- Look for Prometheus and proceed with the installation.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/02bebb79-b3c3-4ad8-9d67-e12ec2fc53dd)<p>
+Prometheus is set to /Prometheus path in system configurations.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/ece653ee-8443-4c31-bbda-b3045acf7a8c)<p>
+- Click on Apply and save.
+### Create a static target for Jenkins in Prometheus
+In order to establish a static target, you must include job_name with static_configs. Navigate to the Prometheus server.<p>
+```
+sudo vim /etc/prometheus/prometheus.yml
+```
+Add:
+```
+- job_name: 'jenkins'
+    metrics_path: '/prometheus'
+    static_configs:
+      - targets: ['<jenkins-ip>:8080']
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/d388c691-5e75-46b0-8b4e-5bc9167ea80a)<p>
+Once again, we will validate the configuration and then utilise a POST request to reload the configuration. 
+```
+promtool check config /etc/prometheus/prometheus.yml
+
+curl -X POST http://localhost:9090/-/reload
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/0d998559-603e-49b5-a2b7-b0d64eae64b7)<p>
+Let's confirm from the Prometheus server. <p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/2e271103-65e0-4a18-b0f6-bead72e9f93c)<p>
+
+
+
 
 
 
