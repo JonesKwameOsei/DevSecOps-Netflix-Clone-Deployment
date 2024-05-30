@@ -318,9 +318,12 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 5. Now, log in into jenkins now by entring values into the appropraite fields.
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/b56a08c1-cae0-43d7-8261-1bc9c4db414e)<p>
 6. Next, click on `Save and Continue`.
-
-
-
+7. On the Instance Configuration page, ensure your Jenkins URL has been populated and click on Save and Continue. NB: I have mine hidden, hence, not visible but should be in the format: http://yourinstanceIPAdress:8080.
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/808dc3d1-5bbf-4450-996d-b772172e86aa)<p>
+8. Click on `Start using Jenkins`.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/1f2006d2-cdfa-4897-89e5-136ff88ec4f3)<p>
+We have successfully logged into Jenkins CI server.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/64c1c068-251c-42d6-8574-4c4381069349)<p>
 
 
 3. **Integrating Docker and NPM for Packaging the Application**:
