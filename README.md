@@ -362,7 +362,7 @@ docker ps                      # List containers that are running
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/6c3e9795-6537-4958-a89c-6849ebaaf0ce)<p>
 
 #### Access SonarQube in the Web Browser
-1. In the address bar, type, http:InstanceIP:9000:9000
+1. In the address bar, type, http:InstanceIP:9000. <p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/b9e31af0-3e3c-4178-8b98-7a801b28aec9)<p>
 2. Enter login details and hit Enter: 
 - Login: admin
@@ -399,7 +399,7 @@ sh trivyscanner.sh
 ### Create API Key From TMDB
 1. In the address bar of your browser, enter `TMDB`. 
 2. Select and click the first firt link.
-3. At the top right corner, click on `Login`.
+3. At the top right corner, click on `Login`.<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/4df510b6-f89c-47a3-9ac3-f786b0b98c2d)<p>
 4. Under `Log Into Your Account`, select `Click here`. Follow the prompt to create your account and click sign-up.<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/d601c936-d0b0-4bf9-b962-b841f823b591)<p>
@@ -412,13 +412,21 @@ sh trivyscanner.sh
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/caed904d-c48e-43ea-acbc-d603d567dcde)<p>
 9. Under `Request an API Key`, Click on `Click here` to generate the API key. <p>
 ![GenerateAPIKey](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/eae083d6-cc50-4850-b254-c693af83cc09)<p>
+10. Click on `Developer`.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/fa22fe84-8aaa-43c9-9f4c-d2342fb3694a)<p>
+11. Scroll down and `Accept` terms. <p>
+12. Provides the required information and click `Submit`. <p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/447c2b57-a5f5-43ed-8c73-dfa81027d44f)<p>
+13. Finally, API key has been generated.<p>
+![APIKEYGenerated](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/5ef83a8d-9911-429c-b518-34f81f9e3def)<p>
+
 
 7. **Deploying the Application to Kubernetes**:
    - The Jenkins pipeline will deploy the application to the Kubernetes cluster provisioned by Terraform.
    - We will use Helm, a package manager for Kubernetes, to simplify the deployment and management of the application and its dependencies, including Prometheus and Grafana for monitoring.
    - The Kubernetes resources, such as Deployments, Services, and Ingress, will be defined and managed using Terraform.
 
-8. **Monitoring and Observability**:
+### Monitoring and Observability**:
    - Prometheus and Grafana will be installed and configured to provide comprehensive monitoring and observability for the Kubernetes cluster and the deployed application.
    - The Grafana dashboard will be set up to visualize key metrics and performance indicators, enabling the team to quickly identify and address any issues.
 
