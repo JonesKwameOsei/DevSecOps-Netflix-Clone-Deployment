@@ -661,14 +661,23 @@ password admin
 ```
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/658f1132-4e8a-41e5-9e6d-96bf2247be2b)<p>
 
-6. Update login details.
+6. Update login details.<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/4b2e4e3b-fd91-447f-b5f5-22d6df43539b)<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/3344db25-efdd-4c52-a242-5c7f35167159)<p>
 
 7. Add `Data Sources` to visualise metrics. Click on Data Sources.<p>
 8. Under choose a datate source type, select Prometheus. <p>
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/6bfc5e53-5292-4827-a100-5e100688c50d)
-
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/6bfc5e53-5292-4827-a100-5e100688c50d)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/5a914639-609f-46f1-b3d1-a84112c55e76)<p>
+9. Enter localhost:9090 as the URL and click Save and test. You will be able to confirm that the Data source is functioning properly.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/7a5e76ff-3577-4d23-b15d-85217136cf74)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/3383c8ee-efb4-4d22-9370-c9174fb24dcd)<p>
+10. Add dashboard. Click on the `Plus, +` sign at the top.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/6ee651cd-1f41-410d-b558-6a2957e72b11)<p>
+11. To import the dashboard, paste the code `1860` and then click on the `load` button.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/550b75ba-02b1-433b-b7aa-85c31957b77f)<p>
+12. Next, select the datasource (Prometheus) and click on `Import`. <p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/37c98caf-39ac-455d-8f73-e77cb3ca3ee4)<p>
 
 
 
