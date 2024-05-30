@@ -362,6 +362,16 @@ docker ps                      # List containers that are running
 ```
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/6c3e9795-6537-4958-a89c-6849ebaaf0ce)<p>
 
+#### Access SonarQube in the Web Browser
+1. In the address bar, type, http:InstanceIP:9000:9000
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/b9e31af0-3e3c-4178-8b98-7a801b28aec9)<p>
+2. Enter login details and hit Enter: 
+- Login: admin
+- Password: admin
+3. Update the login details<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/03612327-a889-4311-8bde-f33a5d36edf6)<p>
+
+
 5. **Deploying the Application to Kubernetes**:
    - The Jenkins pipeline will deploy the application to the Kubernetes cluster provisioned by Terraform.
    - We will use Helm, a package manager for Kubernetes, to simplify the deployment and management of the application and its dependencies, including Prometheus and Grafana for monitoring.
