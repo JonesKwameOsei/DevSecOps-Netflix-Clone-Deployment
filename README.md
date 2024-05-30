@@ -301,7 +301,27 @@ Let's confirm if jenkins was installed by the userdata when the EC2 instance lau
 sudo systemctl status jenkins
 ```
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/099ced1f-bf59-432c-bdbf-a2e5fb3bc672)<p>
-From the output, Jenkins CI is up and running.
+From the output, Jenkins CI is up and running. The password to connect to Jenkins is displayed on the fisrt line: **48e9348189e443329d7c38708264f029**. The same can be found in this directory, **/var/lib/jenkins/secrets/initialAdminPassword**. When we cat this directory, we will get the same password:
+```
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/5a728920-fac1-4186-8f76-873ced003f5e)<p>
+
+### Connect to Jenkins CI
+1. On the browser, we will conntect to Jenkins server which listens to port 8080.
+2. In the address bar type, `http://InstanceIPAddress:8080`. This will open Jenkins login pane.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/0ea0073e-6ef6-4939-8318-79bebfde76b3)<p>
+3. Enter the password into the admin password field. Then click on Continue.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/ee98ecf5-ca66-4ab7-bac4-2a6684ebf4d1)<p>
+4. Click the **tile** with `install suggested plugins`.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/a248a46b-a522-4449-8377-3e0781300442)<p>
+5. Now, log in into jenkins now by entring values into the appropraite fields.
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/b56a08c1-cae0-43d7-8261-1bc9c4db414e)<p>
+6. Next, click on `Save and Continue`.
+
+
+
+
 
 3. **Integrating Docker and NPM for Packaging the Application**:
    - We will use Docker to package the Netflix clone application and its dependencies into a containerized environment.
