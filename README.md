@@ -398,7 +398,7 @@ sh trivyscanner.sh
 
 ### Create API Key From TMDB
 1. In the address bar of your browser, enter `TMDB`. 
-2. Select and click the first firt link.
+2. Select and click the first link.
 3. At the top right corner, click on `Login`.<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/4df510b6-f89c-47a3-9ac3-f786b0b98c2d)<p>
 4. Under `Log Into Your Account`, select `Click here`. Follow the prompt to create your account and click sign-up.<p>
@@ -420,17 +420,264 @@ sh trivyscanner.sh
 13. Finally, API key has been generated.<p>
 ![APIKEYGenerated](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/5ef83a8d-9911-429c-b518-34f81f9e3def)<p>
 
+### Monitoring and Observability
+   - Prometheus and Grafana will be installed and configured to provide comprehensive monitoring and observability for the Kubernetes cluster and the deployed application.
+   - The Grafana dashboard will be set up to visualize key metrics and performance indicators, enabling the team to quickly identify and address any issues.<p>
+#### Create a user for Prometheus
+1. On the `grafana_prometheus server`, we will create a user for prometheus.
+```
+sudo useradd \                                  # Adds the new user
+    --system \                                  # Creates a system account
+    --no-create-home \                          # No home directory for dependencies
+    --shell /bin/false prometheus               # Creates user and group for Prometheus
+```
+2. Install Prometheus.
+```
+# Download the installtion file
+wget https://github.com/prometheus/prometheus/releases/download/v2.47.1/prometheus-2.47.1.linux-amd64.tar.gz
 
-7. **Deploying the Application to Kubernetes**:
+# Unzip the executable file
+tar -xvf prometheus-2.47.1.linux-amd64.tar.gz
+
+# Remove the zip file after extraction
+rm prometheus-2.47.1.linux-amd64.tar.gz
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/c5b5168b-4e36-42c3-87b5-b6cd322331bf)<p>
+3. Create a data directory and folder for Prometheus config files
+```
+sudo mkdir -p /data /etc/prometheus
+
+# change the directory to Prometheus and move some files.
+cd prometheus-2.47.1.linux-amd64/
+
+# list files in the directory
+ls -1
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/0c01bdb0-f07a-410d-9799-3dc4e2c57fae)
+
+4a. Next, we will move Prometheus binary as well as promtool to /usr/local/bin/.
+```
+sudo mv prometheus promtool /usr/local/bin/
+```
+4b. We will again move console libraries to the Prometheus configuration directory. 
+```
+sudo mv consoles/ console_libraries/ /etc/prometheus/
+```
+4c. Finally, we will move the main Prometheus configuration file.
+```
+sudo mv prometheus.yml /etc/prometheus/prometheus.yml
+```
+5. Set ownership for the /etc/prometheus/ and data directory.
+```
+sudo chown -R prometheus:prometheus /etc/prometheus/ /data/
+```
+6. Now, check the version of Prometheus downloaded.<p>
+```
+prometheus --version
+
+# Get details on configuration options
+prometheus --help
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/03592d3e-7627-4dd0-bc9d-3f82204bcfec)
+
+#### Pormetheus Service
+We will employ Systemd, a system and service manager designed for Linux operating systems. To do so, we will need to generate a Systemd unit configuration file.
+```
+# Create a file for the service
+sudo vi /etc/systemd/system/prometheus.service
+```
+Add this configuration to the file:
+```
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/local/bin/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/data \
+  --web.console.templates=/etc/prometheus/consoles \
+  --web.console.libraries=/etc/prometheus/console_libraries \
+  --web.listen-address=0.0.0.0:9090 \
+  --web.enable-lifecycle
+[Install]
+WantedBy=multi-user.target
+```
+7. After this, we will enable, start and confirm the status of prometheus.
+```
+sudo systemctl enable prometheus
+sudo systemctl start prometheus
+sudo systemctl status prometheus
+```
+Promtheus is up and running:<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/0e2ca048-d614-4a4c-bbd9-0f79ce7161bb)<p>
+8. For troubleshooting in case there is an issue or the prometheus doesn't start, run: 
+```
+journalctl -u prometheus -f --no-pager
+```
+#### Access Prometheus on the Browser
+We can now attempt to access it through the web browser. I will use the IP address of the Ubuntu server and you will need to add port 9090 to the IP.
+```
+Instance-public-ip:9090
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/15043683-302b-4521-b198-4208650d5090)<p>
+When we visit targets, we will only find one - Prometheus target. By default, it automatically scrapes itself every 15 seconds.<p>
+1. Click on `Status`, and select `Targets`. <p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/5d2deeb5-1219-4395-9378-ca37d92616e2)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/7400d38f-edfb-4d2f-8edf-468730fce237)<p>
+
+#### Install Node Explorer 
+To begin, we will install Node Exporter on Ubuntu 22.04. Then, we will proceed to establish and customize Node Exporter to gather Linux system metrics such as CPU load and disk I/O, and expose them as Prometheus-style metrics. The installation process is similar to Prometheus, so we won't delve as deeply into it. Start by creating a system user for Node Exporter with the following command:
+```
+# Create user for Node Exporter
+sudo useradd \
+    --system \
+    --no-create-home \
+    --shell /bin/false node_exporter
+
+# Download the binary via wget
+wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
+
+# Unzip and Extract binary files
+tar -xvf node_exporter-1.6.1.linux-amd64.tar.gz
+
+# Move binary to the /usr/local/bin.
+sudo mv \
+  node_exporter-1.6.1.linux-amd64/node_exporter \
+  /usr/local/bin/
+
+# Clean up, and delete node_exporter archive and a folder.
+rm -rf node_exporter*
+
+# Confirm the installation
+node_exporter --version
+node_exporter --help
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/81775f3e-6bd2-447a-8dfb-aef28598ca6c)<p>
+
+#### Create  Node_Exporter Service
+1. Generate a systemd unit file.
+```
+sudo vim /etc/systemd/system/node_exporter.service
+```
+Add:
+```
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=500
+StartLimitBurst=5
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/local/bin/node_exporter \
+    --collector.logind
+[Install]
+WantedBy=multi-user.target
+```
+2. After this, we will enable, start and confirm the status of prometheus.
+```
+sudo systemctl enable node_exporter
+sudo systemctl node_exporter
+sudo systemctl node_exporter
+```
+Node_Exporter is running.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/d659c05d-6871-4fbe-9b57-96e1be88f914)<p>
+For any issues, check logs with journalctl
+```
+journalctl -u node_exporter -f --no-pager 
+```
+**Create a static target by adding job_name with static_configs.**
+```
+sudo vim /etc/prometheus/prometheus.yml
+```
+
+Add:
+```
+- job_name: node_export
+    static_configs:
+      - targets: ["localhost:9100"]
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/a944e8fd-79ad-4e54-8eaf-c326c748c89b)<p>
+Node Exporter is typically exposed on `port 9100` by default. With lifecycle management enabled through API calls, we have the capability to reload the Prometheus configuration without the need to restart the service, thus avoiding downtime. It is important to check the validity of the configuration before restarting.
+```
+# validating configuration
+promtool check config /etc/prometheus/prometheus.yml
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/bffbd795-5c46-41d8-905a-6fa92bbc6557)<p>
+
+Afterward, we can utilise a `POST request` to refresh the configuration.
+```
+curl -X POST http://localhost:9090/-/reload
+```
+Let's check on the Prometheus `Targets` session to verify if this has been populated. 
+```
+http://instace-ip:9090/targets
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/300731f2-48fc-46f7-a567-664cd1ffdc0c)<p>
+
+### Installation of Grafana
+Grafana is often used with Prometheus because Grafana can directly connect to Prometheus as a data source, providing rich visualization options, alerting capabilities, and exploration features to effectively monitor and analyze the metrics collected by Prometheus. The combination of Prometheus for data collection and Grafana for visualization and analysis offers a powerful and flexible monitoring solution that is widely adopted in cloud-native and DevOps environments. The integration of Grafana and Prometheus enables consolidated monitoring, proactive alerting, and deeper insights into system performance.<p>
+1. Install all dependencies:
+```
+sudo apt-get install -y apt-transport-https software-properties-common
+```
+2. Add the GPG key.
+```
+wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+```
+3. Stabilse releases
+```
+echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+```
+4. Update and install grafana
+```
+sudo apt-get update
+sudo apt-get -y install grafana
+```
+5.  After this, we will enable, start and confirm the status of prometheus.
+```
+sudo systemctl enable grafana-server
+sudo systemctl start grafana-server
+sudo systemctl status grafana-server
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/47a44993-4087-418d-8da4-8e87df9d6bfc)<p>
+
+To connect to grafana server, visit `http://instance-ip:3000` and access Grafana by logging in with the default credentials. Use "admin" as both the username and password.
+```
+username admin
+password admin
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/658f1132-4e8a-41e5-9e6d-96bf2247be2b)<p>
+
+6. Update login details.
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/4b2e4e3b-fd91-447f-b5f5-22d6df43539b)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/3344db25-efdd-4c52-a242-5c7f35167159)<p>
+
+7. Add `Data Sources` to visualise metrics. Click on Data Sources.<p>
+8. Under choose a datate source type, select Prometheus. <p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/6bfc5e53-5292-4827-a100-5e100688c50d)
+
+
+
+
+9. **Deploying the Application to Kubernetes**:
    - The Jenkins pipeline will deploy the application to the Kubernetes cluster provisioned by Terraform.
    - We will use Helm, a package manager for Kubernetes, to simplify the deployment and management of the application and its dependencies, including Prometheus and Grafana for monitoring.
    - The Kubernetes resources, such as Deployments, Services, and Ingress, will be defined and managed using Terraform.
 
-### Monitoring and Observability**:
-   - Prometheus and Grafana will be installed and configured to provide comprehensive monitoring and observability for the Kubernetes cluster and the deployed application.
-   - The Grafana dashboard will be set up to visualize key metrics and performance indicators, enabling the team to quickly identify and address any issues.
-
-9. **Cleanup and Destruction of Resources**:
+10. **Cleanup and Destruction of Resources**:
    - After the successful deployment and testing of the application, we will use Terraform to destroy all the provisioned resources, including the EC2 instance, EBS volume, and Kubernetes cluster.
    - This ensures that we don't incur unnecessary costs for resources that are no longer needed.
 
