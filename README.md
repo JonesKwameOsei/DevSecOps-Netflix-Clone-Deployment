@@ -663,7 +663,7 @@ password admin
 
 6. Update login details.<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/4b2e4e3b-fd91-447f-b5f5-22d6df43539b)<p>
-![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/3344db25-efdd-4c52-a242-5c7f35167159)<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/3344db25-efdd-4c52-a242-5c7f35167159)<p?
 
 7. Add `Data Sources` to visualise metrics. Click on Data Sources.<p>
 8. Under choose a datate source type, select Prometheus. <p>
