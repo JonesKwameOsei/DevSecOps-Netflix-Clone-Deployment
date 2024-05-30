@@ -347,7 +347,6 @@ docker version
 
 ### Implementing Security Scanning with SonarQube
    - We will integrate Sonar to perform code quality and security analysis on the application's source code.
-   - Trivy will be used to scan the Docker images for known vulnerabilities, ensuring that the deployed containers are secure.
    - OWASP will be integrated to assess the application's security posture and identify any potential web application vulnerabilities.
 Here, we will dockerise **SonarQube** instead of installing it. This means we will run sonar as a container. First, let's pull the sonar image with docker.
 ```
@@ -370,18 +369,60 @@ docker ps                      # List containers that are running
 - Password: admin
 3. Update the login details<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/03612327-a889-4311-8bde-f33a5d36edf6)<p>
+Successfully logged into SonarQube server.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/0d026aaf-c3e4-486f-8afa-93a9c32342cf)<p>
 
+### Installing Trivy Scanner
+Trivy will be used to scan the Docker images for known vulnerabilities, ensuring that the deployed containers are secure.<p>
+1. Create file with the shell script below.
+```
+sudo vi trivyscanner.sh
+```
+Add:
+```
+sudo apt-get install wget apt-transport-https gnupg lsb-release -y
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install trivy -y
+```
+Add user permission to execute the file:
+```
+sudo chmod +x trivyscanner.sh
+```
+Execute or run the file:
+```
+sh trivyscanner.sh
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/02f573af-06e9-462e-be69-9759cbeb9bb9)<p>
 
-5. **Deploying the Application to Kubernetes**:
+### Create API Key From TMDB
+1. In the address bar of your browser, enter `TMDB`. 
+2. Select and click the first firt link.
+3. At the top right corner, click on `Login`.
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/4df510b6-f89c-47a3-9ac3-f786b0b98c2d)<p>
+4. Under `Log Into Your Account`, select `Click here`. Follow the prompt to create your account and click sign-up.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/d601c936-d0b0-4bf9-b962-b841f823b591)<p>
+5. Verify your your email to actiavte your account.
+6. Next, log in with your username and password<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/238d4d04-8b3a-4d4e-9fc3-668f52732f89)<p>
+7. Click on your profile icon and select `Setting`. <p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/3b2de92c-bb3a-4e1d-9d0a-121ccfb86c09)<p>
+8. Next, on the left side bar, select `API`.<p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/caed904d-c48e-43ea-acbc-d603d567dcde)<p>
+9. Under `Request an API Key`, Click on `Click here` to generate the API key. <p>
+![GenerateAPIKey](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/eae083d6-cc50-4850-b254-c693af83cc09)<p>
+
+7. **Deploying the Application to Kubernetes**:
    - The Jenkins pipeline will deploy the application to the Kubernetes cluster provisioned by Terraform.
    - We will use Helm, a package manager for Kubernetes, to simplify the deployment and management of the application and its dependencies, including Prometheus and Grafana for monitoring.
    - The Kubernetes resources, such as Deployments, Services, and Ingress, will be defined and managed using Terraform.
 
-6. **Monitoring and Observability**:
+8. **Monitoring and Observability**:
    - Prometheus and Grafana will be installed and configured to provide comprehensive monitoring and observability for the Kubernetes cluster and the deployed application.
    - The Grafana dashboard will be set up to visualize key metrics and performance indicators, enabling the team to quickly identify and address any issues.
 
-7. **Cleanup and Destruction of Resources**:
+9. **Cleanup and Destruction of Resources**:
    - After the successful deployment and testing of the application, we will use Terraform to destroy all the provisioned resources, including the EC2 instance, EBS volume, and Kubernetes cluster.
    - This ensures that we don't incur unnecessary costs for resources that are no longer needed.
 
