@@ -326,15 +326,41 @@ We have successfully logged into Jenkins CI server.<p>
 ![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/64c1c068-251c-42d6-8574-4c4381069349)<p>
 
 
-3. **Integrating Docker and NPM for Packaging the Application**:
+### Integrating Docker for Packaging the Application
    - We will use Docker to package the Netflix clone application and its dependencies into a containerized environment.
    - The application's source code will be built using NPM, and the resulting artifacts will be bundled into a Docker image.
-   - The Docker image will be pushed to a container registry, such as Amazon Elastic Container Registry (ECR) or Docker Hub, for deployment.
+   - The Docker image will be pushed to a container registry, such as Amazon Elastic Container Registry (ECR) or Docker Hub, for deployment.<p>
+To install and run docker, run the following commands:
+```
+sudo apt-get update                                    # Updates the EC2 Instance
+sudo apt-get install docker.io -y                      # Downloads docker
+sudo usermod -aG docker ubuntu                         # Adds ubuntu to docker group
+newgrp docker                                          # Ccreates a new group 
+sudo chmod 777 /var/run/docker.sock                    # Permission for docker socket
+```
+Now we will confirm the installation of **docker** by running:
+```
+docker --version
+docker version
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/2daaf8a6-6878-4c33-bcdb-8fca6b79ce83)<p>
 
-4. **Implementing Security Scanning**:
+### Implementing Security Scanning with SonarQube
    - We will integrate Sonar to perform code quality and security analysis on the application's source code.
    - Trivy will be used to scan the Docker images for known vulnerabilities, ensuring that the deployed containers are secure.
    - OWASP will be integrated to assess the application's security posture and identify any potential web application vulnerabilities.
+Here, we will dockerise **SonarQube** instead of installing it. This means we will run sonar as a container. First, let's pull the sonar image with docker.
+```
+docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
+```
+Since we donot have the imager in our local registry, docker pulls the from dockerhub registry. <p>
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/85c2f7b4-c135-4541-8598-198df06f829d)<p>
+To see the image and the container running, we will run:
+```
+docker images                  # List docker images
+docker ps                      # List containers that are running
+```
+![image](https://github.com/JonesKwameOsei/DevSecOps-Netflix-Clone-Deployment/assets/81886509/6c3e9795-6537-4958-a89c-6849ebaaf0ce)<p>
 
 5. **Deploying the Application to Kubernetes**:
    - The Jenkins pipeline will deploy the application to the Kubernetes cluster provisioned by Terraform.
